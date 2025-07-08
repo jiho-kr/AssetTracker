@@ -21,12 +21,6 @@ It lets you enter your daily net worth and visualize the trend using line and ba
 
 ---
 
-## Screenshots
-
-*(Add screenshots here if available)*
-
----
-
 ## Requirements
 
 - Xcode 15+
