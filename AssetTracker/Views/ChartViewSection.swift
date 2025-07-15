@@ -40,9 +40,11 @@ struct ChartViewSection: View {
             }
 
             return grouped
-                .compactMap { (_, items) in
+                .compactMap { (monthStart, items) in
                     guard let latest = items.max(by: { $0.timestamp < $1.timestamp }) else { return nil }
-                    return (latest.timestamp, latest.amount)
+                    let comps = calendar.dateComponents([.year, .month], from: monthStart)
+                    guard let monthDate = calendar.date(from: comps) else { return nil }
+                    return (monthDate, latest.amount)
                 }
                 .sorted(by: { $0.0 < $1.0 })
 
@@ -53,9 +55,11 @@ struct ChartViewSection: View {
             }
 
             return grouped
-                .compactMap { (_, items) in
+                .compactMap { (yearStart, items) in
                     guard let latest = items.max(by: { $0.timestamp < $1.timestamp }) else { return nil }
-                    return (latest.timestamp, latest.amount)
+                    let comps = calendar.dateComponents([.year], from: yearStart)
+                    guard let yearDate = calendar.date(from: comps) else { return nil }
+                    return (yearDate, latest.amount)
                 }
                 .sorted(by: { $0.0 < $1.0 })
         }
