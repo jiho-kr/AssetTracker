@@ -168,6 +168,36 @@ struct ChartViewSection: View {
                 }
                 .frame(height: 200)
                 .padding(.horizontal)
+                
+                Text("Last 20 Changes")
+                    .font(.headline)
+                    .padding(.horizontal)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(diffedData.sorted(by: { $0.0 > $1.0 }).prefix(20), id: \.0) { entry in
+                        HStack {
+                            Text(dateFormatter.string(from: entry.0))
+                                            .font(.caption)
+                                            .frame(width: 80, alignment: .leading)
+
+                            let amount = groupedData.first(where: { $0.0 == entry.0 })?.1 ?? 0
+                            let amountInMillions = Int(amount / 1_000_000)
+                            let deltaInMillions = Int(entry.1 / 1_000_000)
+                            let sign = deltaInMillions >= 0 ? "+" : ""
+                            let color = deltaInMillions >= 0 ? Color.green : Color.red
+
+                            Text("\(amountInMillions.formatted(.number.grouping(.automatic)))M")
+                                .font(.caption)
+
+                            Text("\(sign)\(deltaInMillions)M")
+                                .foregroundColor(color)
+                                .font(.caption)
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.bottom)
+
             }
             .padding(.bottom)
             .gesture(
@@ -188,3 +218,10 @@ struct ChartViewSection: View {
         }
     }
 }
+
+private let dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy.MM.dd"
+    formatter.locale = Locale(identifier: "ko_KR") // 한국식 고정
+    return formatter
+}()
