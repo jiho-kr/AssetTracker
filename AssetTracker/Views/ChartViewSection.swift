@@ -17,6 +17,24 @@ enum ChartGrouping: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+extension ChartGrouping {
+    func next() -> ChartGrouping {
+        let all = ChartGrouping.allCases
+        if let index = all.firstIndex(of: self), index < all.count - 1 {
+            return all[index + 1]
+        }
+        return self
+    }
+
+    func previous() -> ChartGrouping {
+        let all = ChartGrouping.allCases
+        if let index = all.firstIndex(of: self), index > 0 {
+            return all[index - 1]
+        }
+        return self
+    }
+}
+
 struct ChartViewSection: View {
     var items: [Item]
     @Binding var selectedGrouping: ChartGrouping
@@ -141,7 +159,7 @@ struct ChartViewSection: View {
                 .chartYAxis {
                     AxisMarks(position: .leading) { value in
                         if let doubleValue = value.as(Double.self) {
-                            let million = doubleValue / 1000_000
+                            let million = doubleValue / 1_000_000
                             AxisGridLine()
                                 .foregroundStyle(Color.gray.opacity(0.2))
                             AxisValueLabel(String(format: "%d백만", Int(million)))
@@ -152,6 +170,21 @@ struct ChartViewSection: View {
                 .padding(.horizontal)
             }
             .padding(.bottom)
+            .gesture(
+                DragGesture()
+                    .onEnded { value in
+                        let threshold: CGFloat = 50
+                        if value.translation.width < -threshold {
+                            withAnimation {
+                                selectedGrouping = selectedGrouping.next()
+                            }
+                        } else if value.translation.width > threshold {
+                            withAnimation {
+                                selectedGrouping = selectedGrouping.previous()
+                            }
+                        }
+                    }
+            )
         }
     }
 }
