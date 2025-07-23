@@ -138,12 +138,8 @@ struct ChartViewSection: View {
                         }
                     }
                 }
-                .frame(height: 250)
+                .frame(height: 150)
                 .padding(.horizontal)
-
-                Text("Change")
-                    .font(.headline)
-                    .padding(.horizontal)
 
                 Chart {
                     ForEach(diffedData, id: \.0) { group in
@@ -166,10 +162,10 @@ struct ChartViewSection: View {
                         }
                     }
                 }
-                .frame(height: 200)
+                .frame(height: 150)
                 .padding(.horizontal)
                 
-                Text("Last 20 Changes")
+                Text("Last 20")
                     .font(.headline)
                     .padding(.horizontal)
 
