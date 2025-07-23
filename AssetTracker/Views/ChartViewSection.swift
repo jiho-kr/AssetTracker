@@ -106,10 +106,6 @@ struct ChartViewSection: View {
             .padding()
 
             VStack(alignment: .leading, spacing: 32) {
-                Text("Trend")
-                    .font(.headline)
-                    .padding(.horizontal)
-
                 Chart {
                     ForEach(groupedData, id: \.0) { group in
                         LineMark(
@@ -164,13 +160,9 @@ struct ChartViewSection: View {
                 }
                 .frame(height: 150)
                 .padding(.horizontal)
-                
-                Text("Last 20")
-                    .font(.headline)
-                    .padding(.horizontal)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    ForEach(diffedData.sorted(by: { $0.0 > $1.0 }).prefix(20), id: \.0) { entry in
+                    ForEach(diffedData.sorted(by: { $0.0 > $1.0 }).prefix(13), id: \.0) { entry in
                         HStack {
                             Text(dateFormatter.string(from: entry.0))
                                             .font(.caption)
