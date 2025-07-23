@@ -172,7 +172,7 @@ struct ChartViewSection: View {
                             let amountInMillions = Int(amount / 1_000_000)
                             let deltaInMillions = Int(entry.1 / 1_000_000)
                             let sign = deltaInMillions >= 0 ? "+" : ""
-                            let color = deltaInMillions >= 0 ? Color.green : Color.red
+                            let color = deltaInMillions >= 0 ? Color.red : Color.blue
 
                             Text("\(amountInMillions.formatted(.number.grouping(.automatic)))M")
                                 .font(.caption)
