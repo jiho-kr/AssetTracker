@@ -68,24 +68,26 @@ struct ChartViewSection: View {
 
         case .yearly:
             let grouped = Dictionary(grouping: items) { item in
-                let comps = calendar.dateComponents([.year], from: item.timestamp)
-                return calendar.date(from: comps) ?? item.timestamp
+                calendar.component(.year, from: item.timestamp)
             }
 
             return grouped
-                .compactMap { (yearStart, items) in
+                .compactMap { (year, items) in
                     guard let latest = items.max(by: { $0.timestamp < $1.timestamp }) else { return nil }
-                    let comps = calendar.dateComponents([.year], from: yearStart)
-                    guard let yearDate = calendar.date(from: comps) else { return nil }
-                    return (yearDate, latest.amount)
+                    let yearDate = calendar.date(from: DateComponents(year: year, month: 1, day: 1))
+                    return yearDate.map { ($0, latest.amount) }
                 }
                 .sorted(by: { $0.0 < $1.0 })
+
         }
     }
 
     private var diffedData: [(Date, Double)] {
         var result: [(Date, Double)] = []
         let sorted = groupedData
+        if let first = sorted.first {
+            result.append((first.0, 0))
+        }
         for i in 1..<sorted.count {
             let date = sorted[i].0
             let delta = sorted[i].1 - sorted[i - 1].1
