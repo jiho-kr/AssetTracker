@@ -127,7 +127,7 @@ struct ChartViewSection: View {
                 }
                 .chartYScale(domain: .automatic(includesZero: false))
                 .chartYAxis {
-                    AxisMarks(position: .leading) { value in
+                    AxisMarks(position: .trailing) { value in
                         if let doubleValue = value.as(Double.self) {
                             let billion = doubleValue / 100_000_000
                             AxisGridLine()
@@ -136,32 +136,37 @@ struct ChartViewSection: View {
                         }
                     }
                 }
+                .padding(.leading, 42)
                 .frame(height: 150)
                 .padding(.horizontal)
-
-                Chart {
-                    ForEach(diffedData, id: \.0) { group in
-                        BarMark(
-                            x: .value("Date", group.0),
-                            y: .value("Delta", group.1)
-                        )
-                        .foregroundStyle(group.1 >= 0 ? .green : .red)
-                        .opacity(0.7)
-                    }
-                }
-                .chartYScale(domain: .automatic(includesZero: true))
-                .chartYAxis {
-                    AxisMarks(position: .leading) { value in
-                        if let doubleValue = value.as(Double.self) {
-                            let million = doubleValue / 1_000_000
-                            AxisGridLine()
-                                .foregroundStyle(Color.gray.opacity(0.2))
-                            AxisValueLabel(String(format: "%d백만", Int(million)))
+                .overlay {
+                    Chart {
+                        ForEach(diffedData, id: \.0) { group in
+                            BarMark(
+                                x: .value("Date", group.0),
+                                y: .value("Delta", group.1)
+                            )
+                            .foregroundStyle(group.1 >= 0 ? .green : .red)
+                            .opacity(0.7)
                         }
                     }
+                    .chartYScale(domain: .automatic(includesZero: true))
+                    .chartYAxis {
+                        AxisMarks(position: .leading) { value in
+                            if let doubleValue = value.as(Double.self) {
+                                let million = doubleValue / 1_000_000
+                                AxisGridLine()
+                                    .foregroundStyle(Color.gray.opacity(0.2))
+                                AxisValueLabel(String(format: "%d백만", Int(million)))
+                            }
+                        }
+                    }
+                    .padding(.trailing, 27)
+                    .frame(height: 150)
+                    .chartXAxis(.hidden)
+                    .padding(.horizontal)
+                    .allowsHitTesting(false)
                 }
-                .frame(height: 150)
-                .padding(.horizontal)
 
                 VStack(alignment: .leading, spacing: 8) {
                     let maxAmount = groupedData.map(\.1).max() ?? 0
