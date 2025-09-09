@@ -95,6 +95,16 @@ struct ChartViewSection: View {
         }
         return result
     }
+    
+    private var recent13WithMax: [(Date, Double)] {
+        var recent = Array(diffedData.sorted(by: { $0.0 > $1.0 }).prefix(13))
+        if let maxEntry = groupedData.max(by: { $0.1 < $1.1 }),
+           let oldest = recent.last,
+           maxEntry.0 != oldest.0 {
+            recent.append((maxEntry.0, 0))
+        }
+        return recent
+    }
 
     var body: some View {
         ScrollView {
@@ -170,8 +180,8 @@ struct ChartViewSection: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     let maxAmount = groupedData.map(\.1).max() ?? 0
-
-                    ForEach(diffedData.sorted(by: { $0.0 > $1.0 }).prefix(13), id: \.0) { entry in
+                    
+                    ForEach(recent13WithMax, id: \.0) { entry in
                         HStack {
                             Text(dateFormatter.string(from: entry.0))
                                             .font(.caption)
@@ -234,3 +244,5 @@ private let dateFormatter: DateFormatter = {
     formatter.locale = Locale(identifier: "ko_KR") // 한국식 고정
     return formatter
 }()
+
+
