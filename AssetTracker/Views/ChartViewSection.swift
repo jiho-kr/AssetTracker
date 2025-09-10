@@ -100,7 +100,7 @@ struct ChartViewSection: View {
         var recent = Array(diffedData.sorted(by: { $0.0 > $1.0 }).prefix(13))
         if let maxEntry = groupedData.max(by: { $0.1 < $1.1 }),
            let oldest = recent.last,
-           maxEntry.0 != oldest.0 {
+           maxEntry.0 < oldest.0 {
             recent.append((maxEntry.0, 0))
         }
         return recent
