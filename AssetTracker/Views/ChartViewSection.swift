@@ -96,6 +96,15 @@ struct ChartViewSection: View {
         return result
     }
     
+    private var maxDeltaEntry: (Date, Double)? {
+        diffedData.max(by: { $0.1 < $1.1 })
+    }
+
+    private var minDeltaEntry: (Date, Double)? {
+        diffedData.min(by: { $0.1 < $1.1 })
+    }
+
+    
     private var recent13WithMax: [(Date, Double)] {
         var recent = Array(diffedData.sorted(by: { $0.0 > $1.0 }).prefix(13))
         if let maxEntry = groupedData.max(by: { $0.1 < $1.1 }),
@@ -117,7 +126,7 @@ struct ChartViewSection: View {
             .labelsHidden()
             .padding()
 
-            VStack(alignment: .leading, spacing: 32) {
+            VStack(alignment: .leading, spacing: 8) {
                 Chart {
                     ForEach(groupedData, id: \.0) { group in
                         LineMark(
@@ -176,6 +185,23 @@ struct ChartViewSection: View {
                     .chartXAxis(.hidden)
                     .padding(.horizontal)
                     .allowsHitTesting(false)
+                }
+                
+                if let maxEntry = maxDeltaEntry, let minEntry = minDeltaEntry {
+                    HStack {
+                        let topInMillions = Int(maxEntry.1 / 1_000_000)
+                        Text("Top \(dateFormatter.string(from: maxEntry.0)) +\(topInMillions)M")
+                            .font(.caption)
+                            .foregroundColor(.red)
+
+                        Spacer()
+
+                        let worstInMillions = Int(minEntry.1 / 1_000_000)
+                        Text("Worst \(dateFormatter.string(from: minEntry.0)) \(worstInMillions)M")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    }
+                    .padding(.horizontal)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
